@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexus Bank &mdash; Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+:root{--primary:#0A4D68;--primary-light:#088395;--accent:#05BFDB;--accent-gold:#C5A572;--bg:#f8fafb;--card:#fff;--gray-50:#f3f4f6;--gray-200:#e5e7eb;--gray-500:#6b7280;--gray-600:#4b5563;--text:#0f172a;--success:#10b981;--danger:#ef4444;--gradient:linear-gradient(135deg,var(--primary) 0%,var(--primary-light) 50%,var(--accent) 100%);--shadow-sm:0 1px 3px rgba(10,77,104,0.08);--shadow-md:0 4px 16px rgba(10,77,104,0.10);--shadow-xl:0 20px 40px rgba(10,77,104,0.14);--radius:16px;--radius-lg:24px;--sidebar-w:72px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* LOGIN SCREEN */
+#loginScreen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0a4d68 0%,#088395 60%,#05bfdb 100%);position:relative;overflow:hidden;transition:opacity .5s ease,transform .5s ease}
+#loginScreen.hiding{opacity:0;transform:scale(1.04);pointer-events:none}
+.blob{position:absolute;border-radius:50%;background:rgba(255,255,255,0.06);animation:blobP 5s ease-in-out infinite}
+.blob1{width:500px;height:500px;top:-200px;right:-150px}
+.blob2{width:350px;height:350px;bottom:-150px;left:-80px;animation-delay:1.5s}
+.blob3{width:200px;height:200px;top:40%;left:5%;animation-delay:3s}
+@keyframes blobP{0%,100%{transform:scale(1);opacity:.4}50%{transform:scale(1.1);opacity:.7}}
+.login-card{display:flex;width:90%;max-width:900px;min-height:540px;border-radius:28px;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,0.3);position:relative;z-index:1;animation:cardIn .6s cubic-bezier(.34,1.56,.64,1) both}
+@keyframes cardIn{from{opacity:0;transform:translateY(40px) scale(.95)}to{opacity:1;transform:translateY(0) scale(1)}}
+.lp{flex:1;background:rgba(255,255,255,0.08);backdrop-filter:blur(20px);border-right:1px solid rgba(255,255,255,0.15);padding:52px 44px;display:flex;flex-direction:column;justify-content:space-between;color:white}
+.lp-logo{display:flex;align-items:center;gap:10px;font-family:'Playfair Display',serif;font-size:22px;font-weight:700;text-decoration:none;color:white}
+.lp-logo-icon{width:42px;height:42px;background:rgba(255,255,255,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;border:1px solid rgba(255,255,255,0.25)}
+.lp-mid h2{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;line-height:1.25;margin-bottom:14px}
+.lp-mid p{font-size:14px;opacity:.72;line-height:1.7;max-width:340px}
+.lp-trust{display:flex;flex-direction:column;gap:12px}
+.lp-trust-item{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.10);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:12px 16px}
+.lp-ico{width:36px;height:36px;background:rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.lp-txt strong{font-size:13px;font-weight:600;display:block}
+.lp-txt span{font-size:11px;opacity:.6}
+.rp{width:400px;background:white;padding:52px 44px;display:flex;flex-direction:column;justify-content:center}
+.back-link{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--gray-500);text-decoration:none;margin-bottom:32px;transition:color .2s}
+.back-link:hover{color:var(--primary)}
+.rp h1{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--primary);margin-bottom:5px}
+.rp-sub{font-size:13px;color:var(--gray-500);margin-bottom:28px}
+.fg{margin-bottom:18px}
+.fg label{display:block;font-size:11px;font-weight:700;color:var(--gray-600);text-transform:uppercase;letter-spacing:.07em;margin-bottom:7px}
+.fi-wrap{position:relative}
+.fi-ico{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--gray-500);pointer-events:none}
+.fi-ico svg{width:16px;height:16px;display:block}
+.fi{width:100%;padding:12px 14px 12px 40px;border:1.5px solid var(--gray-200);border-radius:12px;font-size:14px;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);outline:none;transition:border-color .2s,box-shadow .2s}
+.fi:focus{border-color:var(--accent);background:white;box-shadow:0 0 0 4px rgba(5,191,219,.1)}
+.fi::placeholder{color:#c4c9d4}
+.eye-btn{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--gray-500);display:flex;align-items:center;padding:0}
+.eye-btn svg{width:16px;height:16px}
+.row-split{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+.rem-label{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--gray-600);cursor:pointer}
+.rem-label input{width:15px;height:15px;accent-color:var(--accent);cursor:pointer}
+.forgot-link{font-size:12px;font-weight:600;color:var(--accent);text-decoration:none}
+.forgot-link:hover{text-decoration:underline}
+.err-box{display:none;align-items:center;gap:8px;background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:10px 14px;font-size:13px;color:var(--danger);margin-bottom:16px}
+.err-box.show{display:flex}
+.err-box svg{width:15px;height:15px;flex-shrink:0}
+.btn-sub{width:100%;background:var(--gradient);color:white;border:none;border-radius:12px;padding:14px;font-size:14px;font-weight:700;cursor:pointer;transition:all .25s;font-family:'Plus Jakarta Sans',sans-serif;box-shadow:0 6px 20px rgba(5,191,219,.35);display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-sub:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(5,191,219,.45)}
+.btn-sub:disabled{opacity:.65;cursor:not-allowed;transform:none}
+.spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:sp .7s linear infinite;display:none}
+@keyframes sp{to{transform:rotate(360deg)}}
+.signup-row{text-align:center;margin-top:20px;font-size:13px;color:var(--gray-500)}
+.signup-row a{color:var(--primary);font-weight:700;text-decoration:none}
+.signup-row a:hover{text-decoration:underline}
+.demo-hint{text-align:center;margin-top:14px;font-size:11px;color:var(--gray-500);background:var(--gray-50);border-radius:8px;padding:7px}
+@media(max-width:720px){.lp{display:none}.rp{width:100%}.login-card{max-width:460px}}
+
+/* DASHBOARD */
+#dashboard{display:none;min-height:100vh}
+#dashboard.active{display:flex;animation:dashIn .55s cubic-bezier(.34,1.2,.64,1) both}
+@keyframes dashIn{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+.sidebar{width:var(--sidebar-w);background:var(--card);border-radius:0 var(--radius-lg) var(--radius-lg) 0;box-shadow:var(--shadow-xl);display:flex;flex-direction:column;align-items:center;padding:24px 0;position:fixed;top:0;left:0;bottom:0;z-index:100;gap:8px}
+.sb-logo{width:42px;height:42px;background:var(--gradient);border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:28px;box-shadow:0 4px 12px rgba(5,191,219,.35);font-family:'Playfair Display',serif;font-size:20px;font-weight:800;color:white;text-decoration:none}
+.nav-item{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--gray-500);transition:all .25s;border:none;background:transparent}
+.nav-item:hover{background:var(--gray-50);color:var(--primary)}
+.nav-item.active{background:var(--gradient);color:white;box-shadow:0 6px 16px rgba(5,191,219,.35)}
+.nav-item svg{width:20px;height:20px}
+.sb-bottom{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:10px}
+.avatar{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--accent-gold),#e8c99a);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:white;box-shadow:var(--shadow-md);cursor:pointer;transition:transform .2s}
+.avatar:hover{transform:scale(1.08)}
+.logout-btn{width:36px;height:36px;border-radius:10px;background:rgba(239,68,68,.08);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--danger);transition:all .2s}
+.logout-btn:hover{background:rgba(239,68,68,.15);transform:scale(1.08)}
+.logout-btn svg{width:17px;height:17px}
+.main{margin-left:var(--sidebar-w);flex:1;display:grid;grid-template-columns:1fr 320px;min-height:100vh}
+.content{padding:32px 28px;display:flex;flex-direction:column;gap:24px}
+.right-panel{background:var(--card);border-left:1px solid var(--gray-200);padding:32px 24px;display:flex;flex-direction:column;gap:24px;min-height:100vh}
+.dash-header{display:flex;align-items:flex-start;justify-content:space-between}
+.dash-header h1{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;color:var(--primary);line-height:1.2}
+.header-date{font-size:13px;color:var(--gray-500);margin-top:4px}
+.header-actions{display:flex;gap:10px;align-items:center}
+.user-tag{display:flex;align-items:center;gap:7px;background:rgba(5,191,219,.08);border:1px solid rgba(5,191,219,.2);border-radius:30px;padding:5px 14px 5px 8px;font-size:12px;font-weight:600;color:var(--primary-light)}
+.online-dot{width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 0 2px rgba(16,185,129,.2);animation:dotB 2s ease-in-out infinite}
+@keyframes dotB{0%,100%{box-shadow:0 0 0 2px rgba(16,185,129,.2)}50%{box-shadow:0 0 0 5px rgba(16,185,129,.08)}}
+.btn-icon{width:38px;height:38px;border-radius:10px;background:var(--card);border:1px solid var(--gray-200);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;box-shadow:var(--shadow-sm)}
+.btn-icon:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.btn-icon svg{width:18px;height:18px;color:var(--gray-600)}
+.notif-dot{position:relative}
+.notif-dot::after{content:'';position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--accent);border:2px solid white}
+.balance-row{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.balance-card{background:var(--gradient);border-radius:var(--radius-lg);padding:28px;color:white;position:relative;overflow:hidden;box-shadow:0 12px 32px rgba(10,77,104,.30);animation:slideUp .5s ease both}
+.balance-card::before{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.07)}
+.balance-card::after{content:'';position:absolute;bottom:-60px;left:60px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.05)}
+.balance-label{font-size:12px;font-weight:500;opacity:.75;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.balance-amount{font-family:'Playfair Display',serif;font-size:32px;font-weight:700}
+.balance-sub{font-size:12px;opacity:.65;margin-top:6px}
+.balance-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,.18);border-radius:20px;padding:4px 10px;font-size:12px;font-weight:600;margin-top:16px;backdrop-filter:blur(4px)}
+.promo-card{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);border-radius:var(--radius-lg);padding:28px;color:white;position:relative;overflow:hidden;box-shadow:var(--shadow-xl);animation:slideUp .5s .1s ease both}
+.promo-card::before{content:'';position:absolute;top:-20px;right:-20px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(197,165,114,.25),transparent)}
+.promo-tag{display:inline-flex;align-items:center;gap:6px;background:rgba(197,165,114,.18);border:1px solid rgba(197,165,114,.3);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;color:var(--accent-gold);margin-bottom:12px}
+.promo-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;margin-bottom:6px}
+.promo-desc{font-size:12px;opacity:.55;line-height:1.5;margin-bottom:16px}
+.promo-btn{background:linear-gradient(90deg,var(--accent-gold),#ddb97a);color:#0f172a;border:none;border-radius:10px;padding:8px 18px;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;font-family:'Plus Jakarta Sans',sans-serif}
+.promo-btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(197,165,114,.4)}
+.overview-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.ov-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);border:1px solid var(--gray-200);transition:all .25s;animation:slideUp .5s ease both}
+.ov-card:hover{box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.ov-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.ov-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.ov-icon.income{background:rgba(16,185,129,.1);color:var(--success)}
+.ov-icon.expense{background:rgba(239,68,68,.1);color:var(--danger)}
+.ov-icon.savings{background:rgba(5,191,219,.1);color:var(--accent)}
+.ov-icon svg{width:18px;height:18px}
+.ov-badge{font-size:11px;font-weight:600;padding:3px 8px;border-radius:20px}
+.ov-badge.up{background:rgba(16,185,129,.1);color:var(--success)}
+.ov-badge.down{background:rgba(239,68,68,.1);color:var(--danger)}
+.ov-label{font-size:12px;color:var(--gray-500);margin-bottom:4px}
+.ov-value{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--primary)}
+.progress-wrap{margin-top:14px}
+.progress-top{display:flex;justify-content:space-between;font-size:11px;color:var(--gray-500);margin-bottom:6px}
+.progress-bar{height:5px;background:var(--gray-50);border-radius:99px;overflow:hidden}
+.progress-fill{height:100%;border-radius:99px;width:0;transition:width 1.2s cubic-bezier(.34,1.56,.64,1)}
+.progress-fill.income{background:linear-gradient(90deg,#10b981,#34d399)}
+.progress-fill.expense{background:linear-gradient(90deg,#ef4444,#f87171)}
+.progress-fill.savings{background:linear-gradient(90deg,var(--accent),#67e8f9)}
+.chart-card{background:var(--card);border-radius:var(--radius-lg);padding:24px;box-shadow:var(--shadow-md);border:1px solid var(--gray-200);animation:slideUp .5s .2s ease both}
+.chart-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.chart-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--primary)}
+.chart-sub{font-size:12px;color:var(--gray-500);margin-top:2px}
+.period-tabs{display:flex;gap:4px;background:var(--gray-50);border-radius:10px;padding:4px}
+.period-btn{padding:6px 14px;border-radius:8px;border:none;font-size:12px;font-weight:600;cursor:pointer;transition:all .25s;background:transparent;color:var(--gray-500);font-family:'Plus Jakarta Sans',sans-serif}
+.period-btn.active{background:var(--gradient);color:white;box-shadow:0 4px 10px rgba(5,191,219,.3)}
+.chart-legend{display:flex;gap:16px}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-600)}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+.legend-dot.income{background:var(--success)}
+.legend-dot.expense{background:var(--danger)}
+.chart-wrap{height:220px;position:relative}
+.tx-card{background:var(--card);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);border:1px solid var(--gray-200)}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--primary)}
+.see-all{font-size:12px;font-weight:600;color:var(--accent);cursor:pointer}
+.tx-item{display:flex;align-items:center;gap:12px;padding:10px;border-radius:12px;cursor:pointer;transition:all .2s}
+.tx-item:hover{background:var(--gray-50);transform:translateY(-1px)}
+.tx-icon{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.tx-info{flex:1;min-width:0}
+.tx-name{font-size:13px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tx-date{font-size:11px;color:var(--gray-500);margin-top:1px}
+.tx-amount{font-size:13px;font-weight:700;flex-shrink:0}
+.tx-amount.credit{color:var(--success)}
+.tx-amount.debit{color:var(--danger)}
+.rp-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--primary);margin-bottom:4px}
+.rp-sub{font-size:12px;color:var(--gray-500)}
+.quick-contacts{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.contact-item{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer}
+.contact-avatar{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:white;transition:all .2s;box-shadow:var(--shadow-sm)}
+.contact-avatar:hover{transform:scale(1.08);box-shadow:var(--shadow-md)}
+.contact-name{font-size:10px;color:var(--gray-600);font-weight:500}
+.transfer-card{background:var(--card);border:1px solid var(--gray-200);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm)}
+.input-group{margin-bottom:14px}
+.input-label{font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;display:block}
+.input-field{width:100%;padding:10px 14px;border:1.5px solid var(--gray-200);border-radius:12px;font-size:13px;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;outline:none;transition:border-color .2s;background:var(--bg)}
+.input-field:focus{border-color:var(--accent);background:white}
+.input-field::placeholder{color:var(--gray-500)}
+.btn-gradient{width:100%;background:var(--gradient);color:white;border:none;border-radius:12px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;transition:all .25s;font-family:'Plus Jakarta Sans',sans-serif;box-shadow:0 6px 16px rgba(5,191,219,.3);letter-spacing:.03em}
+.btn-gradient:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(5,191,219,.4)}
+.currency-card{background:var(--card);border:1px solid var(--gray-200);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm)}
+.currency-row{display:flex;gap:10px;align-items:flex-end}
+.currency-input-wrap{flex:1}
+.currency-input{width:100%;padding:10px 14px;border:1.5px solid var(--gray-200);border-radius:12px;font-size:16px;font-weight:700;color:var(--primary);font-family:'Playfair Display',serif;outline:none;transition:border-color .2s;background:var(--bg)}
+.currency-input:focus{border-color:var(--accent);background:white}
+.currency-select{padding:10px 12px;border:1.5px solid var(--gray-200);border-radius:12px;font-size:12px;font-weight:600;color:var(--text);font-family:'Plus Jakarta Sans',sans-serif;outline:none;background:var(--bg);cursor:pointer}
+.currency-arrow{width:34px;height:34px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;margin-bottom:2px;box-shadow:0 4px 10px rgba(5,191,219,.3)}
+.currency-arrow:hover{transform:rotate(180deg)}
+.currency-arrow svg{width:14px;height:14px;fill:white}
+.rate-info{font-size:11px;color:var(--gray-500);margin-top:10px;text-align:center}
+@keyframes slideUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:1100px){.main{grid-template-columns:1fr}.right-panel{border-left:none;border-top:1px solid var(--gray-200);min-height:auto}}
+@media(max-width:768px){.overview-grid{grid-template-columns:1fr 1fr}.balance-row{grid-template-columns:1fr}}
+@media(max-width:520px){.overview-grid{grid-template-columns:1fr}:root{--sidebar-w:0px}.sidebar{display:none}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+  <div class="login-card">
+    <div class="lp">
+      <a class="lp-logo" href="Bank.html"><div class="lp-logo-icon">N</div>Nexus Bank</a>
+      <div class="lp-mid">
+        <h2>Your money,<br>your control.</h2>
+        <p>Sign in to access your premium banking dashboard and manage all your finances in one place.</p>
+      </div>
+      <div class="lp-trust">
+        <div class="lp-trust-item"><div class="lp-ico">&#128274;</div><div class="lp-txt"><strong>256-bit Encryption</strong><span>Bank-grade security on every login</span></div></div>
+        <div class="lp-trust-item"><div class="lp-ico">&#10003;</div><div class="lp-txt"><strong>FDIC Insured</strong><span>Up to $250,000 per depositor</span></div></div>
+        <div class="lp-trust-item"><div class="lp-ico">&#11088;</div><div class="lp-txt"><strong>4.9 / 5 Rating</strong><span>Trusted by 5M+ customers globally</span></div></div>
+      </div>
+    </div>
+    <div class="rp">
+      <a class="back-link" href="Bank.html">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        Back to Home
+      </a>
+      <h1>Welcome back &#128075;</h1>
+      <p class="rp-sub">Sign in to your Nexus Bank account</p>
+      <div class="err-box" id="errBox">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <span id="errTxt">Invalid credentials.</span>
+      </div>
+      <form id="loginForm" novalidate>
+        <div class="fg">
+          <label>Email Address</label>
+          <div class="fi-wrap">
+            <span class="fi-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
+            <input class="fi" type="email" id="email" placeholder="you@example.com" autocomplete="email" required>
+          </div>
+        </div>
+        <div class="fg">
+          <label>Password</label>
+          <div class="fi-wrap">
+            <span class="fi-ico"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+            <input class="fi" type="password" id="password" placeholder="Enter your password" autocomplete="current-password" required>
+            <button type="button" class="eye-btn" id="eyeBtn">
+              <svg id="eyeIco" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+        </div>
+        <div class="row-split">
+          <label class="rem-label"><input type="checkbox" id="remember"> Remember me</label>
+          <a href="#" class="forgot-link">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn-sub" id="submitBtn">
+          <span id="btnTxt">Sign In &#8594;</span>
+          <div class="spin" id="spinner"></div>
+        </button>
+      </form>
+      <div class="signup-row">Don't have an account? <a href="form.html">Create one free &#8594;</a></div>
+      <div class="demo-hint">&#128161; Demo: any valid email + 6+ character password</div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+  <aside class="sidebar">
+    <a class="sb-logo" href="Bank.html" title="Back to Nexus Bank">N</a>
+    <div class="nav-item active" title="Dashboard"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></div>
+    <div class="nav-item" title="Analytics"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+    <div class="nav-item" title="Cards"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+    <div class="nav-item" title="Transfer"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"/></svg></div>
+    <div class="nav-item" title="Investments"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><line x1="12" y1="20" x2="12" y2="10"/><line x1="18" y1="20" x2="18" y2="4"/><line x1="6" y1="20" x2="6" y2="16"/></svg></div>
+    <div class="sb-bottom">
+      <div class="avatar" id="sbAvatar">?</div>
+      <button class="logout-btn" onclick="doLogout()" title="Sign Out"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></button>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="content">
+      <div class="dash-header">
+        <div>
+          <h1 id="welcomeMsg">Welcome back &#128075;</h1>
+          <div class="header-date" id="currentDate"></div>
+        </div>
+        <div class="header-actions">
+          <div class="user-tag"><span class="online-dot"></span><span id="userEmailTag"></span></div>
+          <div class="btn-icon notif-dot"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15 17H20L18.595 15.595A1.8 1.8 0 0118 14.382V11a6.003 6.003 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.382c0 .512-.182.99-.5 1.368L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg></div>
+        </div>
+      </div>
+      <div class="balance-row">
+        <div class="balance-card">
+          <div class="balance-label">Total Balance</div>
+          <div class="balance-amount">&#8377;8,47,350</div>
+          <div class="balance-sub">Savings + Current + FD</div>
+          <div class="balance-badge"><svg width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>+3.8% this month</div>
+        </div>
+        <div class="promo-card">
+          <div class="promo-tag">&#11088; PREMIUM OFFER</div>
+          <div class="promo-title">5% Cashback on All Spends</div>
+          <div class="promo-desc">Earn up to &#8377;2,000 cashback this month on dining, travel &amp; shopping.</div>
+          <button class="promo-btn">Activate Now &#8594;</button>
+        </div>
+      </div>
+      <div class="overview-grid">
+        <div class="ov-card" style="animation-delay:.1s">
+          <div class="ov-header"><div class="ov-icon income"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 20V4M5 11l7-7 7 7"/></svg></div><span class="ov-badge up">&#8593; 12.4%</span></div>
+          <div class="ov-label">Monthly Income</div><div class="ov-value">&#8377;1,24,000</div>
+          <div class="progress-wrap"><div class="progress-top"><span>Goal</span><span>&#8377;1,50,000</span></div><div class="progress-bar"><div class="progress-fill income" data-width="82"></div></div></div>
+        </div>
+        <div class="ov-card" style="animation-delay:.15s">
+          <div class="ov-header"><div class="ov-icon expense"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 4v16M5 13l7 7 7-7"/></svg></div><span class="ov-badge down">&#8593; 4.1%</span></div>
+          <div class="ov-label">Monthly Expenses</div><div class="ov-value">&#8377;62,800</div>
+          <div class="progress-wrap"><div class="progress-top"><span>Budget</span><span>&#8377;80,000</span></div><div class="progress-bar"><div class="progress-fill expense" data-width="78"></div></div></div>
+        </div>
+        <div class="ov-card" style="animation-delay:.2s">
+          <div class="ov-header"><div class="ov-icon savings"><svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg></div><span class="ov-badge up">&#8593; 8.6%</span></div>
+          <div class="ov-label">Savings &amp; Invest</div><div class="ov-value">&#8377;3,12,500</div>
+          <div class="progress-wrap"><div class="progress-top"><span>Target</span><span>&#8377;5,00,000</span></div><div class="progress-bar"><div class="progress-fill savings" data-width="63"></div></div></div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-header">
+          <div><div class="chart-title">Income vs Expenses</div><div class="chart-sub">Financial performance overview</div></div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px">
+            <div class="period-tabs">
+              <button class="period-btn active" onclick="switchPeriod(this,'3M')">3M</button>
+              <button class="period-btn" onclick="switchPeriod(this,'6M')">6M</button>
+              <button class="period-btn" onclick="switchPeriod(this,'1Y')">1Y</button>
+            </div>
+            <div class="chart-legend"><div class="legend-item"><span class="legend-dot income"></span>Income</div><div class="legend-item"><span class="legend-dot expense"></span>Expenses</div></div>
+          </div>
+        </div>
+        <div class="chart-wrap"><canvas id="financeChart"></canvas></div>
+      </div>
+      <div class="tx-card">
+        <div class="section-header"><div class="section-title">Recent Transactions</div><span class="see-all">View all &#8594;</span></div>
+        <div id="transactions"></div>
+      </div>
+    </div>
+    <div class="right-panel">
+      <div>
+        <div class="rp-title">Quick Transfer</div><div class="rp-sub">Send money instantly</div>
+        <div class="quick-contacts">
+          <div class="contact-item"><div class="contact-avatar" style="background:linear-gradient(135deg,#667eea,#764ba2)">RK</div><span class="contact-name">Rahul</span></div>
+          <div class="contact-item"><div class="contact-avatar" style="background:linear-gradient(135deg,#f093fb,#f5576c)">PM</div><span class="contact-name">Priya</span></div>
+          <div class="contact-item"><div class="contact-avatar" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">AS</div><span class="contact-name">Amit</span></div>
+          <div class="contact-item"><div class="contact-avatar" style="background:linear-gradient(135deg,#43e97b,#38f9d7)">NJ</div><span class="contact-name">Neha</span></div>
+          <div class="contact-item"><div class="contact-avatar" style="background:linear-gradient(135deg,#fa709a,#fee140)">+</div><span class="contact-name">Add</span></div>
+        </div>
+      </div>
+
+     
+
+
+      <div class="transfer-card">
+        <div class="section-title" style="margin-bottom:16px">Send Money</div>
+        <div class="input-group"><label class="input-label">Card / Account Number</label><input class="input-field" type="text" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" oninput="formatCard(this)"></div>
+        <div class="input-group"><label class="input-label">Amount (&#8377;)</label><input class="input-field" type="number" placeholder="Enter amount"></div>
+        <div class="input-group" style="margin-bottom:16px"><label class="input-label">Remarks</label><input class="input-field" type="text" placeholder="Optional note"></div>
+        <button class="btn-gradient">Send Money &#8594;</button>
+      </div>
+      <div class="currency-card">
+        <div class="section-title" style="margin-bottom:16px">Currency Converter</div>
+        <div class="currency-row">
+          <div class="currency-input-wrap"><label class="input-label">Amount</label><input class="currency-input" type="number" id="fromAmount" value="1" oninput="convertCurrency()"></div>
+          <div><label class="input-label">From</label>
+          <select class="currency-select" id="fromCurrency" onchange="convertCurrency()"><option value="INR">&#8377; INR</option><option value="USD">$ USD</option><option value="EUR">&#8364; EUR</option><option value="GBP">&#163; GBP</option><option value="AED">AED</option></select></div>
+        </div>
+        <div style="display:flex;justify-content:center;margin:10px 0"><div class="currency-arrow" onclick="swapCurrencies()"><svg viewBox="0 0 24 24"><path d="M7 16V4m0 0L3 8m4-4l4 4M17 8v12m0 0l4-4m-4 4l-4-4"/></svg></div></div>
+        <div class="currency-row">
+          <div class="currency-input-wrap"><label class="input-label">Converted</label><input class="currency-input" type="number" id="toAmount" readonly style="opacity:.7"></div>
+          <div><label class="input-label">To</label>
+          <select class="currency-select" id="toCurrency" onchange="convertCurrency()"><option value="USD">$ USD</option><option value="EUR">&#8364; EUR</option><option value="GBP">&#163; GBP</option><option value="INR">&#8377; INR</option><option value="AED">AED</option></select></div>
+        </div>
+        <div class="rate-info" id="rateInfo"></div>
+      </div>
+      <div class="transfer-card" style="background:var(--gradient);border:none;color:white">
+        <div style="font-family:'Playfair Display',serif;font-size:15px;font-weight:600;margin-bottom:12px">Nexus Rewards</div>
+        <div style="display:flex;justify-content:space-between;gap:12px">
+          <div style="text-align:center"><div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700">2,480</div><div style="font-size:10px;opacity:.7;margin-top:2px">Points Earned</div></div>
+          <div style="width:1px;background:rgba(255,255,255,.2)"></div>
+          <div style="text-align:center"><div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700">&#8377;620</div><div style="font-size:10px;opacity:.7;margin-top:2px">Cash Value</div></div>
+          <div style="width:1px;background:rgba(255,255,255,.2)"></div>
+          <div style="text-align:center"><div style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700">Gold</div><div style="font-size:10px;opacity:.7;margin-top:2px">Tier</div></div>
+        </div>
+        <div style="margin-top:14px;background:rgba(255,255,255,.15);border-radius:99px;height:5px"><div style="width:62%;height:100%;background:var(--accent-gold);border-radius:99px"></div></div>
+        <div style="font-size:10px;opacity:.6;margin-top:6px">2,520 pts to Platinum</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // Helper to make Authenticated API Calls
+async function fetchWithAuth(url, options = {}) {
+    const token = localStorage.getItem('accessToken');
+    const headers = {
+        'Content-Type': 'application/json',
+        ...options.headers
+    };
+    
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(url, {
+        ...options,
+        headers: headers
+    });
+    
+    // If token is invalid (401 Unauthorized), force logout
+    if (response.status === 401) {
+        alert("Session expired. Please login again.");
+        doLogout();
+    }
+    
+    return response;
+}
+
+// =============================================
+// BACKEND API ENDPOINTS
+// =============================================
+const API_BASE = 'http://localhost:8080/api/v1';
+
+// 1. Fetch the logged-in user's profile
+async function fetchUserProfile() {
+    const response = await fetchWithAuth(`${API_BASE}/users/me`);
+    if (response.ok) {
+        return await response.json();
+    }
+    return null;
+}
+
+// 2. Fetch the user's transactions
+async function fetchTransactions() {
+    const response = await fetchWithAuth(`${API_BASE}/transactions`);
+    if (response.ok) {
+        return await response.json();
+    }
+    return [];
+}
+
+// 3. Fetch the user's balance
+async function fetchBalance() {
+    const response = await fetchWithAuth(`${API_BASE}/users/balance`);
+    if (response.ok) {
+        return await response.json();
+    }
+    return { balance: 0 };
+}
+
+
+
+
+/* PASSWORD TOGGLE */
+document.getElementById('eyeBtn').addEventListener('click',()=>{
+  const pwd=document.getElementById('password');
+  const ico=document.getElementById('eyeIco');
+  if(pwd.type==='password'){pwd.type='text';ico.innerHTML='<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>';}
+  else{pwd.type='password';ico.innerHTML='<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';}
+});
+
+/* ======================================================
+   LOGIN - CONNECTED TO REAL JWT BACKEND
+   ====================================================== */
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const pwd = document.getElementById('password').value.trim();
+    const errBox = document.getElementById('errBox');
+    const errTxt = document.getElementById('errTxt');
+    const btn = document.getElementById('submitBtn');
+    const btnTxt = document.getElementById('btnTxt');
+    const spin = document.getElementById('spinner');
+
+    // 1. Clear previous errors
+    errBox.classList.remove('show');
+    
+    // 2. Frontend Validation
+    if (!email || !pwd) {
+        errTxt.textContent = 'Please fill in both fields.';
+        errBox.classList.add('show');
+        return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        errTxt.textContent = 'Please enter a valid email address.';
+        errBox.classList.add('show');
+        return;
+    }
+
+    // 3. Disable button and show spinner
+    btn.disabled = true;
+    btnTxt.textContent = 'Signing in...';
+    spin.style.display = 'block';
+
+    try {
+        // 4. Call your REAL JWT Backend
+        const response = await fetch('http://localhost:8080/api/v1/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email, password: pwd })
+        });
+
+        const data = await response.json();
+
+        // 5. Handle API Errors
+        if (!response.ok) {
+            throw new Error(data.error || data.message || 'Invalid email or password');
+        }
+
+        // 6. Store the JWT Token, Username, and Role in Browser LocalStorage
+        localStorage.setItem('accessToken', data.token);
+        localStorage.setItem('username', data.email);
+        localStorage.setItem('userRole', data.role);
+
+        // 7. Animate the Login Screen hiding
+        document.getElementById('loginScreen').classList.add('hiding');
+
+        // 8. Wait for animation, then show the Dashboard
+        setTimeout(() => {
+            document.getElementById('loginScreen').style.display = 'none';
+            showDashboard(data.email, email, data.role);
+        }, 450);
+
+    } catch (error) {
+        // 9. Show Error Message
+        errTxt.textContent = error.message;
+        errBox.classList.add('show');
+        
+        // Re-enable button
+        btn.disabled = false;
+        btnTxt.textContent = 'Sign In →';
+        spin.style.display = 'none';
+    }
+});
+
+
+/* ======================================================
+   SHOW DASHBOARD (DYNAMIC - LOADS REAL DATA)
+   ====================================================== */
+async function showDashboard(backendEmail, loginEmail, role) {
+    // ✅ FIX 1: Use the email returned from the backend
+    const email = backendEmail || loginEmail;
+
+    // ✅ FIX 2: Safety check to prevent crashing if email is missing
+    if (!email) {
+        alert("Login failed: No email returned from backend.");
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // 1. Setup the UI with logged-in user details
+    const displayName = email.split('@')[0].replace(/[._\-0-9]/g, ' ').trim();
+    const formattedName = displayName.split(' ').filter(Boolean).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') || 'User';
+    const initials = formattedName.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+
+    const first = formattedName.split(' ')[0];
+    document.getElementById('welcomeMsg').textContent = 'Welcome back, ' + first + ' 👋';
+    document.getElementById('userEmailTag').textContent = email;
+    document.getElementById('sbAvatar').textContent = initials;
+
+    // 2. Set Date
+    const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const now = new Date();
+    document.getElementById('currentDate').textContent = DAYS[now.getDay()] + ', ' + now.getDate() + ' ' + MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+
+    // 3. Show the Dashboard container
+    document.getElementById('dashboard').classList.add('active');
+
+    // 4. LOAD REAL DATA FROM BACKEND
+    try {
+        // ✅ Fetch real balance from backend (now calculated dynamically!)
+        const balanceData = await fetchBalance();
+        const balanceAmount = balanceData.balance || 0;
+        document.querySelector('.balance-amount').textContent = '₹' + balanceAmount.toLocaleString('en-IN');
+
+        // Fetch real transactions
+        const txList = await fetchTransactions();
+        renderTransactions(txList);
+
+        const userProfile = await fetchUserProfile();
+        if (userProfile) {
+            document.getElementById('userEmailTag').textContent = userProfile.email;
+        }
+
+    } catch (error) {
+        console.error("Failed to load dashboard data:", error);
+        // ✅ Fallback if backend fails
+        document.querySelector('.balance-amount').textContent = '₹0';
+    }
+
+    // 5. Render charts and progress bars
+    setTimeout(() => {
+        document.querySelectorAll('.progress-fill').forEach(el => {
+            el.style.width = el.dataset.width + '%';
+        });
+    }, 300);
+
+    initChart();
+    
+    convertCurrency();
+
+    // 6. Role-based redirect
+    if (role === 'ADMIN') {
+        setTimeout(() => {
+            alert("🔐 ADMIN ACCESS DETECTED: Redirecting to Admin Control Panel...");
+        }, 1500);
+    }
+}
+
+/* CHART */
+const chartData={'3M':{labels:['Dec','Jan','Feb'],income:[95000,110000,124000],expense:[58000,54000,62800]},'6M':{labels:['Sep','Oct','Nov','Dec','Jan','Feb'],income:[88000,92000,98000,95000,110000,124000],expense:[61000,57000,53000,58000,54000,62800]},'1Y':{labels:['Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb'],income:[78000,82000,85000,90000,87000,93000,88000,92000,98000,95000,110000,124000],expense:[65000,60000,58000,62000,59000,63000,61000,57000,53000,58000,54000,62800]}};
+let chart;
+
+function initChart(){
+  const ctx=document.getElementById('financeChart').getContext('2d');
+  function grad(c1,c2){const g=ctx.createLinearGradient(0,0,0,220);g.addColorStop(0,c1);g.addColorStop(1,c2);return g;}
+  function buildData(p){const d=chartData[p];return{labels:d.labels,datasets:[{label:'Income',data:d.income,borderColor:'#10b981',backgroundColor:grad('rgba(16,185,129,0.25)','rgba(16,185,129,0.01)'),fill:true,tension:.45,pointBackgroundColor:'#10b981',pointBorderColor:'#fff',borderWidth:2.5},{label:'Expenses',data:d.expense,borderColor:'#ef4444',backgroundColor:grad('rgba(239,68,68,0.2)','rgba(239,68,68,0.01)'),fill:true,tension:.45,pointBackgroundColor:'#ef4444',pointBorderColor:'#fff',borderWidth:2.5}]};}
+  window._bd=buildData;
+  chart=new Chart(ctx,{type:'line',data:buildData('3M'),options:{responsive:true,maintainAspectRatio:false,interaction:{mode:'index',intersect:false},plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(10,77,104,0.92)',titleColor:'#e2e8f0',bodyColor:'#e2e8f0',padding:12,cornerRadius:10,callbacks:{label:c=>' '+c.dataset.label+': \u20B9'+(c.raw/1000).toFixed(0)+'k'}}},scales:{x:{grid:{display:false},ticks:{font:{family:'Plus Jakarta Sans',size:11},color:'#9ca3af'}},y:{grid:{color:'rgba(0,0,0,0.05)'},ticks:{font:{family:'Plus Jakarta Sans',size:11},color:'#9ca3af',callback:v=>'\u20B9'+(v/1000)+'k'}}},elements:{point:{radius:4,hoverRadius:7,borderWidth:2}}}});
+}
+
+function switchPeriod(btn,period){
+  document.querySelectorAll('.period-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  if(!chart||!window._bd)return;
+  const d=window._bd(period);
+  chart.data.labels=d.labels;
+  chart.data.datasets[0].data=d.datasets[0].data;
+  chart.data.datasets[1].data=d.datasets[1].data;
+  chart.update('active');
+}
+
+function formatCard(input){let v=input.value.replace(/\D/g,'').substring(0,16);input.value=v.replace(/(.{4})/g,'$1 ').trim();}
+
+const rates={INR:1,USD:0.01202,EUR:0.01104,GBP:0.00946,AED:0.04416};
+function convertCurrency(){
+  const from=document.getElementById('fromCurrency').value;
+  const to=document.getElementById('toCurrency').value;
+  const amt=parseFloat(document.getElementById('fromAmount').value)||0;
+  document.getElementById('toAmount').value=((amt/rates[from])*rates[to]).toFixed(4);
+  document.getElementById('rateInfo').textContent='1 '+from+' = '+(rates[to]/rates[from]).toFixed(6)+' '+to+'  \u00B7  Live rates';
+}
+function swapCurrencies(){const f=document.getElementById('fromCurrency');const t=document.getElementById('toCurrency');[f.value,t.value]=[t.value,f.value];convertCurrency();}
+
+// 7. Helper to render transactions dynamically
+function renderTransactions(txList) {
+    const container = document.getElementById('transactions');
+    if (!txList || txList.length === 0) {
+        container.innerHTML = `<div style="text-align:center;padding:20px;color:var(--gray-500);">No recent transactions</div>`;
+        return;
+    }
+
+    const fmtINR = n => '₹' + Math.abs(n).toLocaleString('en-IN');
+    
+    container.innerHTML = txList.map(tx => {
+        const isCredit = tx.amount > 0;
+        const icon = isCredit ? '💰' : '💳';
+        const bg = isCredit ? '#d1fae5' : '#fef3c7';
+        const type = isCredit ? 'credit' : 'debit';
+        const sign = isCredit ? '+' : '-';
+        
+        return `
+        <div class="tx-item">
+            <div class="tx-icon" style="background:${bg}">${icon}</div>
+            <div class="tx-info">
+                <div class="tx-name">${tx.description || 'Transaction'}</div>
+                <div class="tx-date">${new Date(tx.timestamp).toLocaleString()}</div>
+            </div>
+            <div class="tx-amount ${type}">${sign}${fmtINR(tx.amount)}</div>
+        </div>`;
+    }).join('');
+}
+
+
+/* ======================================================
+   LOGOUT FUNCTION
+   ====================================================== */
+function doLogout() {
+    if (confirm('Sign out of Nexus Bank?')) {
+        // 1. Remove tokens and user data from browser storage
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('username');
+        localStorage.removeItem('userRole');
+        
+        // 2. Reload the page to go back to the clean Login Screen
+        location.reload();
+    }
+}
+
+// =============================================
+// DEBUG MODE - Find the failing API
+// =============================================
+// Override fetchWithAuth to print the exact error
+const originalFetchWithAuth = fetchWithAuth;
+fetchWithAuth = async function(url, options = {}) {
+    try {
+        const response = await originalFetchWithAuth(url, options);
+        if (!response.ok) {
+            console.error(`❌ API FAILED: ${url}`, response.status, response.statusText);
+            const errorText = await response.text();
+            console.error("Full Error Response:", errorText);
+        } else {
+            console.log(`✅ API SUCCESS: ${url}`);
+        }
+        return response;
+    } catch (error) {
+        console.error(`🔥 NETWORK ERROR on ${url}:`, error);
+        throw error;
+    }
+};
+
+// =============================================
+// ACTIVITY TRACKING (Simplified)
+// =============================================
+
+// Track any user activity
+async function trackActivity(action, channel) {
+    try {
+        const token = localStorage.getItem('accessToken');
+        const response = await fetch('http://localhost:8080/api/v1/omnichannel/track', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                action: action,
+                channel: channel
+            })
+        });
+    } catch (error) {
+        // Silently ignore - tracking is non-critical
+    }
+}
+
+// Mark an activity as satisfied (successful)
+async function satisfyActivity(action) {
+    try {
+        const token = localStorage.getItem('accessToken');
+        const response = await fetch('http://localhost:8080/api/v1/omnichannel/satisfy', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                action: action
+            })
+        });
+    } catch (error) {
+        // Silently ignore
+    }
+}
+
+</script>
+</body>
+</html>

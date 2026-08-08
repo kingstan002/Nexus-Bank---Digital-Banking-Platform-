@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | Nexus Bank</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="css.files/form.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="bg-circle bg-circle-1"></div>
+    <div class="bg-circle bg-circle-2"></div>
+    <div class="bg-circle bg-circle-3"></div>
+
+    <a href="Bank.html?v=1" class="back-link">← Back to Home</a>
+
+    <div class="register-wrapper">
+        <div class="register-logo">
+            <a href="Bank.html">
+                <div class="logo-icon">N</div>
+                <span class="logo-text">Nexus Bank</span>
+            </a> 
+        </div>
+
+        <div class="register-card">
+            <div class="modal-header">
+                <h2>Create Your Account</h2>
+                <p>Join millions of satisfied customers in just a few steps</p>
+            </div>
+
+            <div class="modal-body">
+                <div class="progress-steps">
+                    <div class="step active" id="step1">
+                        <div class="step-circle">1</div>
+                        <div class="step-label">Personal Info</div>
+                    </div>
+                    <div class="step" id="step2">
+                        <div class="step-circle">2</div>
+                        <div class="step-label">Account Type</div>
+                    </div>
+                    <div class="step" id="step3">
+                        <div class="step-circle">3</div>
+                        <div class="step-label">Verification</div>
+                    </div>
+                </div>
+
+                <form id="registrationForm" novalidate>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" id="fullName" name="fullName" placeholder="John Doe" required autocomplete="name">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phoneNumber" placeholder="+1 (555) 000-0000" required autocomplete="tel">
+                        </div>
+                    </div>
+
+                    <!-- ✅ THIS NAME ATTRIBUTE MUST BE "email" -->
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="john@example.com" required autocomplete="email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" placeholder="Create a strong password" required autocomplete="new-password">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="accountType">Account Type</label>
+                        <select id="accountType" name="accountType" required>
+                            <option value="">Select an account type</option>
+                            <option value="checking">Personal Checking</option>
+                            <option value="savings">High-Yield Savings</option>
+                            <option value="business">Business Account</option>
+                            <option value="student">Student Account</option>
+                        </select>
+                    </div>
+
+                    <div class="modal-actions">
+                        <a href="Bank.html?v=1" class="cta-button secondary">Cancel</a>
+                        <button type="submit" class="cta-button" id="submitBtn">Continue →</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="register-footer">
+                Already have an account? <a href="Bank.html#login" onclick="sessionStorage.setItem('openLogin','true')">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+  <script>
+    function showToast(message, type = 'success') {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `toast ${type} show`;
+        setTimeout(() => toast.classList.remove('show'), 4000);
+    }
+
+    function setStep(active) {
+        [1, 2, 3].forEach(n => {
+            const el = document.getElementById(`step${n}`);
+            el.classList.remove('active', 'completed');
+            if (n < active) el.classList.add('completed');
+            if (n === active) el.classList.add('active');
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("✅ Nexus Bank Registration Form Loaded!");
+
+        const form = document.getElementById('registrationForm');
+        if (!form) {
+            console.error("❌ CRITICAL ERROR: 'registrationForm' not found in HTML!");
+            return;
+        }
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log("✅ Form Submit Triggered!");
+
+            // ✅ Use the form's named properties to get values
+            const formData = {
+                fullName: form.fullName.value.trim(),
+                email: form.email.value.trim(),
+                phoneNumber: form.phoneNumber.value.trim(),
+                accountType: form.accountType.value,
+                password: form.password.value.trim(),
+                role: "USER"
+            };
+
+            console.log("📦 SENDING TO BACKEND:", formData);
+
+            if (!formData.fullName || !formData.email || !formData.phoneNumber || !formData.accountType || !formData.password) {
+                showToast('⚠️ Please fill in all fields', 'error');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.textContent = 'Registering...';
+            submitBtn.disabled = true;
+            setStep(2);
+
+            try {
+                const response = await fetch('http://localhost:8080/api/v1/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    setStep(3);
+                    showToast(`✅ Welcome, ${formData.fullName}! Account created successfully.`);
+                    form.reset();
+                    setTimeout(() => {
+                        sessionStorage.setItem('openLogin', 'true');
+                        window.location.href = 'Bank.html';
+                    }, 2000);
+                } else {
+                    setStep(1);
+                    showToast('❌ ' + (data.error || data.message || 'Registration failed. Please try again.'), 'error');
+                }
+            } catch (error) {
+                setStep(1);
+                console.error('Registration Error:', error);
+                showToast('❌ Could not connect to server. Please ensure the backend is running.', 'error');
+            } finally {
+                submitBtn.textContent = 'Continue →';
+                submitBtn.disabled = false;
+            }
+        });
+    });
+</script>
+</script>
+</script>
+</body>
+</html>
