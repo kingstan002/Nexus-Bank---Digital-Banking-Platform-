@@ -2,14 +2,6 @@
 
 Nexus Bank is a **secure, full-stack digital banking application** built with Spring Boot and PostgreSQL. It demonstrates enterprise-grade architecture, JWT-based security, SOLID principles, and AI-driven user activity tracking with a 24-hour auto-cleanup policy for data privacy.
 
-![Nexus Bank Dashboard](screenshot-dashboard.png)  
-*(Replace with an actual screenshot of your dashboard)*
-
----
-
-## 🚀 Live Demo (Optional)
-> *If you have deployed it, add a link here. Example:*  
-> [Live Demo](https://nexus-bank.onrender.com)
 
 ---
 
