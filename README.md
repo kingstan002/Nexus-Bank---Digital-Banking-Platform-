@@ -51,3 +51,17 @@ Nexus Bank is a **secure, full-stack digital banking application** built with Sp
 ---
 
 ## 📁 Project Structure (Simplified)
+
+nexus-bank-backend/
+├── src/main/java/com.mayank.bankapp.banking.service/
+│ ├── controller/ # REST Controllers (Auth, User, Transaction)
+│ ├── service/ # Business logic & interfaces (SOLID)
+│ ├── repository/ # JPA repositories
+│ ├── entity/ # JPA entities (User, Transaction, AuthUser)
+│ ├── security/ # JwtUtil, JwtRequestFilter, CustomUserDetailsService
+│ ├── securityconfig/ # SecurityConfig, CorsConfig
+│ └── config/ # Scheduling, common configurations
+├── src/main/resources/
+│ ├── application.properties
+│
+└── pom.xml
